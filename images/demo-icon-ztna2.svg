@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_레이어_2" data-name="레이어 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290.7 290.7">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 5.5px;
+      }
+
+      .cls-2 {
+        opacity: .2;
+      }
+    </style>
+  </defs>
+  <g id="_迹_2" data-name="卵迹_2">
+    <circle class="cls-2" cx="145.35" cy="145.35" r="145.35"/>
+    <g>
+      <g>
+        <path class="cls-1" d="M136.83,193.94c-21.46-13.82-34.87-37.29-35.86-62.8l-.26-6.74,6.42-2.08c7.17-2.32,12.27-8.67,13-16.17l.89-9.11h48.98l.89,9.11c.73,7.5,5.83,13.84,13,16.17l6.42,2.08-.26,6.74c-.99,25.5-14.4,48.98-35.86,62.8l-8.67,5.58-8.67-5.58Z"/>
+        <g>
+          <circle class="cls-1" cx="145.5" cy="146.14" r="26.53"/>
+          <path class="cls-1" d="M131.56,145.18s9.14,12.37,9.14,11.78,18.73-21.66,18.73-21.66"/>
+        </g>
+      </g>
+      <polyline class="cls-1" points="170.88 107.98 193.74 107.98 206.81 94.91"/>
+      <polyline class="cls-1" points="172.03 179.15 194.53 179.15 207.6 192.22"/>
+      <line class="cls-1" x1="224.13" y1="142.5" x2="190.29" y2="142.5"/>
+      <circle class="cls-1" cx="212.86" cy="86.25" r="10.25"/>
+      <circle class="cls-1" cx="145.5" cy="52.89" r="10.25" transform="translate(-9.07 61.56) rotate(-23.19)"/>
+      <circle class="cls-1" cx="145.5" cy="237.8" r="10.25" transform="translate(-39.18 28.96) rotate(-10.03)"/>
+      <circle class="cls-1" cx="234.38" cy="142.5" r="10.25"/>
+      <circle class="cls-1" cx="214.99" cy="199.53" r="10.25" transform="translate(-28.6 362.93) rotate(-76.72)"/>
+      <polyline class="cls-1" points="83.89 94.91 96.96 107.98 120.12 107.98"/>
+      <polyline class="cls-1" points="83.09 192.22 96.16 179.15 119.86 179.15"/>
+      <line class="cls-1" x1="100.71" y1="142.5" x2="66.57" y2="142.5"/>
+      <circle class="cls-1" cx="77.84" cy="86.25" r="10.25"/>
+      <circle class="cls-1" cx="56.32" cy="142.5" r="10.25"/>
+      <circle class="cls-1" cx="75.7" cy="199.53" r="10.25" transform="translate(-43.82 22.73) rotate(-13.28)"/>
+      <line class="cls-1" x1="145.1" y1="96.5" x2="145.1" y2="63.62"/>
+      <line class="cls-1" x1="145.5" y1="227.56" x2="145.5" y2="199.52"/>
+    </g>
+  </g>
+</svg>

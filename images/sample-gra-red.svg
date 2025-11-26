@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_레이어_1" data-name="레이어_1" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 250 80">
+  <!-- Generator: Adobe Illustrator 29.2.0, SVG Export Plug-In . SVG Version: 2.1.0 Build 108)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: url(#_무제_그라디언트_14);
+      }
+    </style>
+    <linearGradient id="_무제_그라디언트_14" data-name="무제 그라디언트 14" x1="125" y1="3.31" x2="125" y2="75.21" gradientUnits="userSpaceOnUse">
+      <stop offset=".03" stop-color="#d7091d"/>
+      <stop offset=".15" stop-color="#d7091d" stop-opacity=".98"/>
+      <stop offset=".28" stop-color="#d7091d" stop-opacity=".92"/>
+      <stop offset=".42" stop-color="#d7091d" stop-opacity=".81"/>
+      <stop offset=".56" stop-color="#d7091d" stop-opacity=".66"/>
+      <stop offset=".71" stop-color="#d7091d" stop-opacity=".48"/>
+      <stop offset=".86" stop-color="#d7091d" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#d7091d" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <polygon class="st0" points="0 51.24 25.36 54.71 51.66 34.64 76.66 39.48 100.41 44.72 125 31.87 152.29 30.56 177.22 4.12 199.69 15.28 224.69 6.06 250 10.54 250 80 0 80 0 51.24"/>
+</svg>

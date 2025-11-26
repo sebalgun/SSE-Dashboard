@@ -1,0 +1,686 @@
+<!doctype html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Solution UI</title>
+		
+		<link rel="stylesheet" href="css/common.css">
+		<link rel="stylesheet" href="css/style.css">
+		<script src="js/jquery.min.js"></script>
+		<script src="js/common.js"></script>
+		<script src="js/icon.js"></script>
+		<script src="js/bootstrap.bundle.min.js"></script>
+		
+	</head>
+	<body class="bgcolor04">
+		
+		<!--SMTP 설정 모달창 시작-->
+		<div class="modal fade" id="smtpModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<div class="title">SMTP 설정하기</div>
+						<span class="fs90 fc-gray pl20 mt-2">안내문구 추가</span>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+
+						<table class="table table-borderless table-search">
+							<tr>
+								<th style="width:20%;">SMTP 사용여부</th>
+								<td style="width:80%;">
+									<label class="toggle_switch">
+										<input type="checkbox" checked>
+										<span class="slider"></span>
+									</label>
+									<span class="fs90 fc-main pl20"> <i class="fa-solid fa-circle-info"></i> 비활성화 시 SMTP 정보가 모두 초기화됩니다.</span>
+								</td>
+							</tr>
+							<tr>
+								<th>메일 서버 ID</th>
+								<td>
+									<input type="text" class="form-control w100p" placeholder="메일 서버 ID를 입력해주세요. 예) admin 또는 admin@example.com" onfocus="this.placeholder = ''">
+								</td>
+							</tr>
+							<tr>
+								<th>메일 서버 패스워드</th>
+								<td>
+									<input type="text" class="form-control w100p" placeholder="패스워드 변경 시에만 입력해주세요." onfocus="this.placeholder = ''">
+								</td>
+							</tr>
+							<tr>
+								<th>TLS 지원 메일 서버</th>
+								<td>
+									<input type="text" class="form-control w100p" placeholder="TLS 지원 메일 서버를 입력해주세요. 예) smtp.example.com" onfocus="this.placeholder = ''">
+								</td>
+							</tr>
+							<tr>
+								<th>메일 서버 포트</th>
+								<td>
+									<input type="text" class="form-control w100p" placeholder="메일 서버 포트를 숫자로 입력해주세요." onfocus="this.placeholder = ''">
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn-text" data-bs-dismiss="modal">취소하기</button>
+						<button type="button" class="btn-text-fill" data-bs-dismiss="modal">저장하기</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--SMTP 설정 모달창 끝-->
+
+		<div class="wrap">
+			<!--Top Head 시작-->
+			<div class="top-head">
+				<div class="logo"><a href="subpage-html3.html"><img src="images/logo-swgv10.svg"></a></div>
+				<div class="position-absolute top-50 start-0 translate-middle" style="margin-left:480px;">
+					<button class="btn btn-state">MINOR <span class="fw-bold badge bgc-gray"> 0</span></button>
+					<button class="btn btn-state">MAJOR <span class="fw-bold badge bgc-gray"> 3</span></button>
+					<button class="btn btn-state">CRITICAL <span class="fw-bold badge bgc-red"> 0</span></button>
+					<button class="btn btn-text btn-red borderless cluster ml10">클러스터링(M)</button>
+				</div>
+
+				<div class="top-right position-absolute top-50 end-0 translate-middle-y">
+					<div class="input-group btn-time mr10">
+						<span class="form-control">00:31</span>
+						<button class="btn btn-outline-secondary" type="button">Refresh</button>
+					</div>
+					<select class="mr5" style="width:140px;">
+						  <option selected>---사이트 선택---</option>
+						  <option value="1">사이트 1</option>
+						  <option value="2">사이트 2</option>
+						  <option value="3">사이트 3</option>
+					</select>
+					<select class="mr10" style="width:100px;">
+						  <option selected>admin</option>
+						  <option value="1">나의 정보</option>
+						  <option value="2">로그 아웃</option>
+					</select>
+					<ul>
+						<li><i class="fa-solid fa-comment head-icon"></i></li>
+						<li><i class="fa-solid fa-circle-question head-icon"></i></li>
+						<li><i class="fa-solid fa-print head-icon"></i></li>
+						<li><i class="fa-solid fa-gear head-icon" id="setcolorbtn"></i></li>
+					</ul>
+				</div>
+				<div id="setcolor" style="display:none;">
+						<table>
+							<tr>
+								<td class="w40p">갱신주기</td>
+								<td>
+									<select>
+										<option selected>---갱신주기---</option>
+										<option></option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td>세션 타임아웃</td>
+								<td>
+									<select>
+										<option selected>---갱신주기---</option>
+										<option></option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td>배경색</td>
+								<td class="bgcolor">
+									<button class="bgcolor01" id="bgcolor01"></button>
+									<button class="bgcolor02" id="bgcolor02"></button>
+									<button class="bgcolor03" id="bgcolor03"></button>
+									<button class="bgcolor04" id="bgcolor04"></button>
+									<button class="bgcolor05" id="bgcolor05"></button>
+									<button class="bgcolor06" id="bgcolor06"></button>
+									<button class="bgcolor07" id="bgcolor07"></button>
+									<button class="bgcolor08" id="bgcolor08"></button>
+									<button class="bgcolor09" id="bgcolor09"></button>
+								</td>
+							</tr>
+							<tr style="border-bottom:0;">
+								<td>기타 설정</td>
+								<td>
+									<label class="toggle_switch">
+										<input type="checkbox">
+										<span class="slider"></span>
+									</label>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			<!--Top 끝-->
+
+			<!--Left Menu 시작-->
+			<div class="leftmenu">
+				<div class="leftmenu-body">
+					<div id="leftmenu" class="accordion">
+						<div>
+							<div class="menu-m on">
+								<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#smenu1" aria-expanded="true" aria-controls="smenu1">
+								<i class="fa-solid fa-database"></i> 정보
+								</button>
+							</div>
+							<div id="smenu1" class="accordion-collapse collapse menu-s show" data-bs-parent="#leftmenu">
+								<ul>
+									<li class="on">일반</li>
+									<li>통계</li>
+									<li>실시간로그</li>
+									<li>하드웨어</li>
+								</ul>
+							</div>
+						</div>	
+						<div>	
+							<div class="menu-m">
+								<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#smenu2" aria-expanded="false" aria-controls="smenu2">
+								<i class="fa-solid fa-magnifying-glass-chart"></i> 분석
+								</button>
+							</div>
+							<div id="smenu2" class="accordion-collapse collapse menu-s" data-bs-parent="#leftmenu">
+								<ul>
+									<li>클러스터링 트래픽 통계</li>
+									<li>클러스터링 로그 검색</li>
+									<li>트래픽 통계</li>
+									<li>로그 검색</li>
+									<li>리포트</li>
+								 </ul>
+							</div>
+						</div>
+						<div>
+							<div class="menu-m">
+								<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#smenu3" aria-expanded="false" aria-controls="smenu3">
+								<i class="fa-solid fa-clipboard-check"></i> 정책
+								</button>
+							</div>
+							<div id="smenu3" class="accordion-collapse collapse menu-s" data-bs-parent="#leftmenu">
+								<ul>
+									<li>클러스터링 트래픽 통계</li>
+									<li>클러스터링 로그 검색</li>
+									<li>트래픽 통계</li>
+									<li>로그 검색</li>
+									<li>리포트</li>
+								 </ul>
+							</div>
+						</div>	
+						<div>
+							<div class="menu-m">
+								<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#smenu4" aria-expanded="false" aria-controls="smenu4">
+								<i class="fa-solid fa-eye"></i> 복호화
+								</button>
+							</div>
+							<div id="smenu4" class="accordion-collapse collapse menu-s" data-bs-parent="#leftmenu">
+								<ul>
+									<li>복호화 제어</li>
+									<li>미러링 설정</li>
+									<li>인증서 관리</li>
+									<li>서버 복호화</li>
+								 </ul>
+							</div>
+						</div>	
+						<div>
+							<div class="menu-m">
+								<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#smenu5" aria-expanded="false" aria-controls="smenu5">
+								<i class="fa-solid fa-gear"></i> 설정
+								</button>
+							</div>
+							<div id="smenu5" class="accordion-collapse collapse menu-s" data-bs-parent="#leftmenu">
+								<ul>
+									<li>네트워크</li>
+									<li>라이선스</li>
+									<li>시스템 관리</li>
+									<li>바이패스</li>
+									<li>업데이트/DB</li>
+									<li>기타 설정</li>
+									<li>재시작 / 종료</li>
+								 </ul>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<!--Left Menu 끝-->
+			
+			<!-- 본문 시작 -->
+			<div class="container-menu">
+				<!--인증서관리 시작-->
+				<div class="bg-content">
+					<div class="c-title">
+						<div class="float-start align-text-bottom"><h1>등록된 인증서</h1></div>
+						<div class="float-end"><button class="btn btn-text hvr-icon-pop"><i class="fa-solid fa-plus hvr-icon pr5"></i> 인증서 추가하기</button></div>
+					</div>
+					<div>
+						<table class="table active">
+							<thead>
+								<tr class="center">
+									<th>No</th>
+									<th>인증서 이름</th>
+									<th>인증서 종류</th>
+									<th>개인키 파일명</th>
+									<th>공용키 파일명</th>
+									<th>등록일시</th>
+									<th>만료일시</th>
+									<th>삭제</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="center">
+									<td>1</td>
+									<td>ㅇㄴㄹㄴㅇㄹㄹ</td>
+									<td>sdf</td>
+									<td>2023-10-01 00:00</td>
+									<td>172.31.23.124</td>
+									<td>123</td>
+									<td>172.12.13.12</td>
+									<td><button class="btn-icon-sub"><i class="fa-solid fa-trash-can"></i></button></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+				<div class="bg-content">
+					<div class="c-title">
+						<div class="float-start align-text-bottom"><h1>인증서 등록</h1></div>
+						<div class="float-end">
+							<button class="btn btn-text">취소하기</button>
+							<button class="btn btn-text-fill">등록하기</button>
+						</div>
+					</div>
+					<div>
+						<table class="table table-borderless table-search mb10">
+							<tr>
+								<th style="width:10%;">인증서 이름</th>
+								<td style="width:40%;">
+									<input type="text" class="form-control w70p" placeholder="인증서의 이름을 입력하세요" onfocus="this.placeholder = ''">
+								</td>
+								<th style="width:10%;">인증서 설명</th>
+								<td style="width:40%;">
+									<input type="text" class="form-control w70p" placeholder="인증서에 대한 설명을 입력하세요" onfocus="this.placeholder = ''">
+								</td>
+							</tr>
+							<tr>
+								<th>인증서 파일 (crt파일)</th>
+								<td>
+									<input class="form-control w70p" type="file" id="formFile">
+								</td>
+								<th>인증서 파일 (key파일)</th>
+								<td>
+									<input class="form-control w70p" type="file" id="formFile1">
+								</td>
+							</tr>
+							<tr>
+								<th>인증서 변환유형</th>
+								<td>
+									<div class="btn-group" role="group">
+										<input type="radio" class="btn-check" name="btnin" id="in1" autocomplete="off" checked>
+										<label class="btn btn-tab" for="in1">기본</label>
+
+										<input type="radio" class="btn-check" name="btnin" id="in2" autocomplete="off">
+										<label class="btn btn-tab" for="in2">DER</label>
+
+										<input type="radio" class="btn-check" name="btnin" id="in3" autocomplete="off">
+										<label class="btn btn-tab" for="in3">PKCS#7</label>
+
+										<input type="radio" class="btn-check" name="btnin" id="in4" autocomplete="off">
+										<label class="btn btn-tab" for="in4">PKCS#12</label>
+
+										<input type="radio" class="btn-check" name="btnin" id="in5" autocomplete="off">
+										<label class="btn btn-tab" for="in5">PEM</label>
+
+										<input type="radio" class="btn-check" name="btnin" id="in6" autocomplete="off">
+										<label class="btn btn-tab" for="in6">JKS</label>
+									</div>
+								</td>
+								<th>인증서 비밀번호</th>
+								<td><input class="form-control w70p"></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<!--인증서관리 끝-->
+				
+				<!--서버관리 시작-->
+				<div class="bg-content">	
+					<div class="d-flex justify-content-between">
+						<div class="float-start">
+							<select class="w300">
+								<option selected>등록된 웹 서버 선택하기</option>
+								<option>111.111.111.1</option>
+								<option>111.111.111.1</option>
+							</select>
+						</div>
+						<div class="float-end right"><button class="btn-text hvr-icon-pop"><i class="fa-solid fa-plus hvr-icon pr5"></i> 서버 추가하기</button></div>
+					</div>
+				</div>
+				
+				<div class="bg-content">
+					<div class="c-title">
+						<div class="float-start align-text-bottom"><h1>서버 기본정보 등록</h1></div>
+						<div class="float-end">
+							<button class="btn btn-text">취소하기</button>
+							<button class="btn btn-text-fill">등록하기</button>
+						</div>
+					</div>
+					<div>
+						<table class="table table-borderless table-search mb10">
+							<tr>
+								<th style="width:10%;">서버 도메인</th>
+								<td style="width:40%;">
+									<input type="text" class="form-control w70p" placeholder="서버의 도메인을 입력하세요" onfocus="this.placeholder = ''">
+								</td>
+								<th style="width:10%;">서버 IP</th>
+								<td style="width:40%;">
+									<input type="text" class="form-control w70p" placeholder="서버의 IP를 입력하세요" onfocus="this.placeholder = ''">
+								</td>
+							</tr>
+							<tr>
+								<th>서버 프로토콜 / 포트</th>
+								<td>
+									<select class="w70p">
+										<option selected>프토로톨 선택</option>
+										<option>111.111.111.1</option>
+									</select>
+								</td>
+								<th>서버 별칭</th>
+								<td>
+									<input type="text" class="form-control w70p" placeholder="사용자만의 별칭을 입력하여 관리할 수 있습니다" onfocus="this.placeholder = ''">
+								</td>
+							</tr>
+							<tr>
+								<th>서버 ACL 정책</th>
+								<td>
+									<select class="w70p">
+										<option selected>ACL 정책 선택</option>
+										<option>111.111.111.1</option>
+									</select>
+								</td>
+								<th>서버 파일/스크립트 정책</th>
+								<td>
+									<select class="w70p">
+										<option selected>보안 정책 선택</option>
+										<option>111.111.111.1</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<th>URL 정책</th>
+								<td>
+									<select class="w70p">
+										<option selected>URL 정책 선택</option>
+										<option>111.111.111.1</option>
+									</select>	
+								</td>
+								<th>서버 정책 그룹</th>
+								<td>
+									<select class="w70p">
+										<option selected>정책 그룹 선택</option>
+										<option>111.111.111.1</option>
+									</select>
+								</td>
+
+							</tr>
+						</table>
+					</div>
+				</div>
+				<!--서버관리 끝-->
+				
+				<!--알람관리1 시작-->
+				<div class="bg-content">
+					<div class="c-title">
+						<div class="float-start align-text-bottom"><h1>알람 관리 (시안 A)</h1></div>
+						<div class="float-end">
+							<button class="btn btn-text">취소하기</button>
+							<button class="btn btn-text-fill">저장하기</button>
+						</div>
+					</div>
+					<div class="row w100p mt10 mb10">
+						<div class="col center m-2 img-svg">
+							<img src="images/icon-admin.svg" class="w100">
+							<p class="fs110 fw-bold">알람 대상</p>
+							<div class="c-box br5  mt15 d-flex justify-content-around">
+								<div>
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="checkbox" id="checksam01">
+										<label class="form-check-label" for="checksam01">통합 관리자</label>
+									</div>
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="checkbox" id="checksam02">
+										<label class="form-check-label" for="checksam02">그룹 관리자</label>
+									</div>
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="checkbox" id="checksam03">
+										<label class="form-check-label" for="checksam03">모니터링</label>
+									</div>
+								</div>
+								<button class="btn btn-text" data-bs-toggle="modal" data-bs-target="#smtpModal">
+									<i class="fa-regular fa-envelope pr5"></i> SMTP 설정
+								</button>	
+							</div>
+							<div>
+								<label class="toggle_switch_l mt20">
+									<input type="checkbox" checked>
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<div class="col center content m-2 img-svg">
+							<img src="images/icon-attack.svg" class="w100">
+							<p class="fs110 fw-bold">공격 알람</p>
+							<div class="c-box br5 center w100p mt15">
+								<i class="fa-solid fa-circle-info pr5"></i> 공격 위협지수 수치가 주의 단계 이상 시 알람 전송
+							</div>
+							
+							<div>
+								<label class="toggle_switch_l mt20">
+									<input type="checkbox" checked>
+									<span class="slider"></span>
+								</label>
+							</div>	
+						</div>
+						<div class="col center content m-2 img-svg">
+							<img src="images/icon-server.svg" class="w100">
+							<p class="fs110 fw-bold">서버 상태 알람</p>
+							<div class="c-box w100p br5 center mt15">
+								<i class="fa-solid fa-circle-info pr5"></i> 대상 서버와 통신이 안 될 경우 알람 전송
+							</div>
+							<div>
+								<label class="toggle_switch_l mt20">
+									<input type="checkbox" checked>
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+				<!--알람관리1 끝-->
+				
+				<!--알람관리2 시작-->
+				<div class="bg-content">
+					<div class="c-title">
+						<div class="float-start align-text-bottom"><h1>알람 관리 (시안 B)</h1></div>
+						<div class="float-end">
+							<button class="btn btn-text">취소하기</button>
+							<button class="btn btn-text-fill">저장하기</button>
+						</div>
+					</div>
+					<div>
+						<table class="table center">
+						<thead>
+							<tr>
+								<th style="width:20%;">구분</th>
+								<th style="width:60%;">선택</th>
+								<th style="width:20%;">설정</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><span class="fw-bold">알람 대상</span></td>
+								<td>
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="checkbox" id="checksam04">
+										<label class="form-check-label" for="checksam04">통합 관리자</label>
+									</div>
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="checkbox" id="checksam05">
+										<label class="form-check-label" for="checksam05">그룹 관리자</label>
+									</div>
+									<div class="form-check form-check-inline">
+										<input class="form-check-input" type="checkbox" id="checksam06">
+										<label class="form-check-label" for="checksam06">모니터링</label>
+									</div>
+
+									<span class="sub-text"><a href="#" class="pl30"><i class="fa-solid fa-arrow-right"></i> SNTP 설정</a></span>
+								</td>
+								<td>
+									<label class="toggle_switch">
+										<input type="checkbox">
+										<span class="slider"></span>
+									</label>
+								</td>
+							</tr>
+							<tr>
+								<td><span  class="fw-bold">공격 알람</span></td>
+								<td>공격 위협지수 수치가 주의 단계 이상 시 알람을 전송합니다.</td>
+								<td> 
+									<label class="toggle_switch">
+										<input type="checkbox">
+										<span class="slider"></span>
+									</label>
+								</td>
+							</tr>
+							<tr>
+								<td><span  class="fw-bold">서버 상태 알람</span></td>
+								<td>대상 서버와 통신이 안 될 경우 알람을 전송합니다.</td>
+								<td>
+									<label class="toggle_switch">
+										<input type="checkbox" checked>
+										<span class="slider"></span>
+									</label>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+				</div>	
+				<!--알람관리2 끝-->
+				
+				<!--차단화면관리 시작-->
+				<div class="bg-content">
+					<div class="c-title">
+						<div class="float-start align-text-bottom"><h1>등록된 차단페이지</h1></div>
+						<div class="float-end"><button class="btn-text hvr-icon-pop"><i class="fa-solid fa-plus hvr-icon pr5"></i> 차단페이지 추가하기</button></div>
+					</div>
+					<div>
+						<table class="table active center">
+						<thead>
+							<tr>
+								<th style="width:5%">No</th>
+								<th style="width:10%">템플릿</th>
+								<th style="width:10%">페이지 이름</th>
+								<th style="width:10%">상태코드</th>
+								<th style="width:10%">차단유형</th>
+								<th style="width:15%">파일명</th>
+								<th style="width:25%;">제목</th>
+								<th style="width:10%">수정일</th>
+								<th style="width:5%">삭제</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>1</td>
+								<td class="temp"><img src="images/temp01.jpg" class="on"></td>
+								<td>기본 차단화면</td>
+								<td>111-12</td>
+								<td>차단유형</td>
+								<td>chadan.jpg</td>
+								<td class="left">비정상 페이지 접속 차단</td>
+								<td>2024-08-01</td>
+								<td><button class="btn-icon-sub"><i class="fa-solid fa-trash-can"></i></button></td>
+							</tr>
+						</tbody>
+					</table>
+					</div>
+				</div>
+				
+				<div class="bg-content">
+					<div class="c-title">
+						<div class="float-start align-text-bottom"><h1>차단페이지 등록</h1></div>
+						<div class="float-end">
+							<button class="btn btn-text">취소하기</button>
+							<button class="btn btn-text">미리보기</button>
+							<button class="btn btn-text-fill">등록하기</button>
+						</div>
+					</div>
+					<div>
+						<table class="table-search mt10 mb10">
+						<tr style="vertical-align:top;">
+							<th style="width:10%;" rowspan="6">차단화면 템플릿</th>
+							<td style="width:40%;" rowspan="6">
+								<div class="block-temp">
+									<img src="images/temp01.jpg" class="on">
+									<img src="images/temp02.jpg">
+									<img src="images/temp03.jpg">
+									<img src="images/temp04.jpg">
+									<img src="images/temp05.jpg">
+									<img src="images/temp05.jpg">
+								</div>
+							</td>
+							<th style="width:10%;">차단페이지 이름</th>
+							<td style="width:40%;">
+								<input type="text" class="form-control w70p" placeholder="외부로 노출되지 않는 내부관리용 이름입니다. (2~30자리)" onfocus="this.placeholder = ''">
+							</td>
+						</tr>
+						<tr>
+							<th style="width:10%;">상태코드</th>
+							<td style="width:40%;">
+								<select class="w70p">
+									<option selected>전체</option>
+									<option>1</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<th style="width:10%;">저장할 파일명</th>
+							<td style="width:40%;">
+								<input type="text" class="form-control w70p" placeholder="지정된 경로에 기입한 파일명으로 저장됩니다. (경로 입력X, 파일명만 입력)" onfocus="this.placeholder = ''">
+							</td>
+						</tr>
+						<tr>
+							<th style="width:10%;">제목</th>
+							<td style="width:40%;">
+								<input type="text" class="form-control w70p" placeholder="차단 페이지 제목 영역에 들어갈 내용을 입력해주세요." onfocus="this.placeholder = ''">
+							</td>
+						</tr>
+						<tr>
+							<th style="width:10%;">소제목</th>
+							<td style="width:40%;">
+								<input type="text" class="form-control w70p" placeholder="차단 페이지 소제목 영역에 들어갈 내용을 입력해주세요." onfocus="this.placeholder = ''">
+							</td>
+						</tr>
+						<tr>
+							<th style="width:10%;">본문</th>
+							<td style="width:40%;">
+								<input type="text" class="form-control w70p" placeholder="차단 페이지 본문에 들어갈 안내 문구를 입력해주세요." onfocus="this.placeholder = ''">
+							</td>
+						</tr>
+					</table>
+					</div>
+				</div>
+				<!--차단화면관리 끝-->
+			</div>
+			<!-- 본문 끝 -->
+			
+			<!--풋터 시작-->
+			<div class="footer center">
+				<span>ⓒ SOOSAN INT Co.,Ltd. eWalker SWG V10 10.0.1.23011201-2213715</span> <span class="fc-main"> DEMO-LICENSE 42 days left.</span>
+			</div>
+			<!--풋터 끝-->
+		</div>
+	</body>
+</html>
