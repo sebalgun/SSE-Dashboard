@@ -714,7 +714,7 @@
 											<p class="fs200 fw700">89<span class="fw400"> %</span></p>
 										</div>
 										<div class="progress">
-											<div class="progress-bar error" style="width:85%;"></div>
+											<div class="progress-bar" style="width:85%;"></div>
 										</div>
 										
 										<div class="fc-gray mt20">MEM</div>
@@ -820,7 +820,7 @@
 							</div>
 
 							<div class="grid-stack-item" gs-w="3" gs-h="2" gs-x="3" gs-y="0">
-								<div class="grid-stack-item-content bg-content active dashbox error">
+								<div class="grid-stack-item-content bg-content active dashbox">
 									<div class="dash-title">VPN 외부접속자 현황 <span class="error">확인필요</span></div>
 									<div class="dash-table-box">
 										<table class="demotable ml10 mr10">
@@ -1525,10 +1525,7 @@
 						progressBar.style.width = currentWidth + '%';
 						
 					// 색상 변화 효과
-					if (isCpuPacket && currentWidth > 90) {
-						// CPU 패킷이 90을 넘어가면 빨간색
-						progressBar.style.backgroundColor = '#d7091d';
-					} else if (currentWidth > 80) {
+					if (currentWidth > 80) {
 						progressBar.style.backgroundColor = '#ff6b6b';
 					} else if (currentWidth > 60) {
 						progressBar.style.backgroundColor = '#a0b8d8';
@@ -2774,8 +2771,28 @@
 							existingChart.destroy();
 						}
 						
-						// 색상에 투명도 추가
-						const backgroundColor = color.includes('rgba') ? color : color + '33'; // 20% 투명도 추가
+					// 색상에 투명도 추가 (rgba 형식으로 변환)
+					const applyOpacity = (colorStr, opacity) => {
+						if (!colorStr) return colorStr;
+						// rgba 형식인 경우
+						if (colorStr.includes('rgba')) {
+							return colorStr.replace(/[\d\.]+\)$/, opacity + ')');
+						}
+						// hex 형식인 경우
+						if (colorStr.startsWith('#')) {
+							const hex = colorStr.slice(1);
+							const r = parseInt(hex.slice(0, 2), 16);
+							const g = parseInt(hex.slice(2, 4), 16);
+							const b = parseInt(hex.slice(4, 6), 16);
+							return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+						}
+						// rgb 형식인 경우
+						if (colorStr.includes('rgb(')) {
+							return colorStr.replace('rgb(', 'rgba(').replace(')', `, ${opacity})`);
+						}
+						return colorStr;
+					};
+					const backgroundColor = applyOpacity(color, 0.2); // 20% 투명도
 						
 						try {
 							return new Chart(ctx, {
@@ -2824,7 +2841,7 @@
 					};
 					
 					// 3개 선 그래프 생성 함수
-					const createMultiLineChart = (elementId, datasets) => {
+					const createMultiLineChart = (elementId, datasets, options = {}) => {
 						const ctx = document.getElementById(elementId);
 						if (!ctx) {
 							console.warn(`Element ${elementId} not found`);
@@ -2837,6 +2854,46 @@
 							existingChart.destroy();
 						}
 						
+						// 옵션 기본값
+						const fill = options.fill !== undefined ? options.fill : false;
+						const backgroundColorOpacity = options.backgroundColorOpacity !== undefined ? options.backgroundColorOpacity : 0.2;
+						const borderWidth = options.borderWidth !== undefined ? options.borderWidth : 1;
+						
+						// 색상 투명도 적용 헬퍼 함수
+						const applyOpacity = (colorStr, opacity) => {
+							if (!colorStr) return colorStr;
+							// rgba 형식인 경우 - 투명도만 교체
+							if (colorStr.includes('rgba')) {
+								return colorStr.replace(/rgba\(([^)]+)\)/, (match, content) => {
+									const parts = content.split(',').map(s => s.trim());
+									if (parts.length === 4) {
+										return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${opacity})`;
+									}
+									return match;
+								});
+							}
+							// hex 형식인 경우
+							if (colorStr.startsWith('#')) {
+								const hex = colorStr.slice(1);
+								let r, g, b;
+								if (hex.length === 3) {
+									r = parseInt(hex[0] + hex[0], 16);
+									g = parseInt(hex[1] + hex[1], 16);
+									b = parseInt(hex[2] + hex[2], 16);
+								} else {
+									r = parseInt(hex.slice(0, 2), 16);
+									g = parseInt(hex.slice(2, 4), 16);
+									b = parseInt(hex.slice(4, 6), 16);
+								}
+								return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+							}
+							// rgb 형식인 경우
+							if (colorStr.includes('rgb(')) {
+								return colorStr.replace('rgb(', 'rgba(').replace(')', `, ${opacity})`);
+							}
+							return colorStr;
+						};
+						
 						try {
 							return new Chart(ctx, {
 								type: 'line',
@@ -2846,10 +2903,10 @@
 										label: dataset.label,
 										data: dataset.data,
 										borderColor: dataset.color,
-										backgroundColor: dataset.color.includes('rgba') ? dataset.color : dataset.color + '33',
-										borderWidth: dataset.borderWidth || 2,
+										backgroundColor: applyOpacity(dataset.color, backgroundColorOpacity),
+										borderWidth: dataset.borderWidth || borderWidth,
 										tension: 0.4,
-										fill: false,
+										fill: fill,
 										pointBackgroundColor: dataset.color,
 										pointBorderColor: dataset.color,
 										pointBorderWidth: 0,
@@ -2868,6 +2925,9 @@
 												color: textColor,
 												font: { size: 11 },
 												usePointStyle: true,
+												pointStyle: 'circle',
+												boxWidth: 6,
+												boxHeight: 6,
 												padding: 10
 											}
 										}
@@ -2920,8 +2980,8 @@
 											getChartColor('DANGER', 0.8),
 											getChartColor('WARNING', 0.8),
 											getChartColor('SUCCESS', 0.8),
-											'rgba(201, 203, 207, 0.8)',
-											'rgba(255, 99, 255, 0.8)'
+											getChartColor('INFO', 0.8),
+											getChartColor('EXTRA', 0.8)
 										],
 										borderColor: 'rgba(255, 255, 255, 0.1)',
 										borderWidth: 2,
@@ -3144,13 +3204,14 @@
 							console.log('✓ IAM Traffic Doughnut Chart initialized');
 						}
 						
-						// IAM 트래픽 차트
-						if (document.getElementById('iamTrafficChart')) {
-							createBasicLineChart('iamTrafficChart', 
-								[1200, 800, 1500, 1800, 2000, 1600, 1000, 1200, 1400, 1800, 1600, 1200], 
-								'트래픽', '#4bc0c0');
-							console.log('✓ IAM Traffic Chart initialized');
-						}
+					// IAM 트래픽 차트
+					if (document.getElementById('iamTrafficChart')) {
+						const iamColor = getChartColor('SECONDARY');
+						createBasicLineChart('iamTrafficChart', 
+							[1200, 800, 1500, 1800, 2000, 1600, 1000, 1200, 1400, 1800, 1600, 1200], 
+							'트래픽', iamColor);
+						console.log('✓ IAM Traffic Chart initialized');
+					}
 						
 						// ZTNA 트래픽 원그래프 (접속/차단)
 						if (document.getElementById('ztnaTrafficDoughnutChart')) {
@@ -3200,14 +3261,14 @@
 							console.log('✓ ZTNA Traffic Doughnut Chart initialized');
 						}
 						
-						// ZTNA 트래픽 차트
-						if (document.getElementById('ztnaTrafficChart')) {
-							const mainColor = window.getMainColor ? window.getMainColor() : '#36a2eb';
-							createBasicLineChart('ztnaTrafficChart', 
-								[800, 600, 1200, 1500, 1800, 1400, 900, 1000, 1300, 1600, 1400, 1000], 
-								'트래픽', mainColor);
-							console.log('✓ ZTNA Traffic Chart initialized');
-						}
+					// ZTNA 트래픽 차트
+					if (document.getElementById('ztnaTrafficChart')) {
+						const vpnColor = getChartColor('PRIMARY');
+						createBasicLineChart('ztnaTrafficChart', 
+							[800, 600, 1200, 1500, 1800, 1400, 900, 1000, 1300, 1600, 1400, 1000], 
+							'트래픽', vpnColor);
+						console.log('✓ ZTNA Traffic Chart initialized');
+					}
 						
 					// 정보유출 감시현황 차트 (누적 막대 그래프)
 					if (document.getElementById('harmfulBlockSystemChart')) {
@@ -3232,8 +3293,8 @@
 									datasets: [{
 										label: '감시',
 										data: monitorData,
-										backgroundColor: getChartColor('SECONDARY', 0.8),
-										borderColor: getChartColor('SECONDARY', 1),
+										backgroundColor: getChartColor('PRIMARY', 0.8),
+										borderColor: getChartColor('PRIMARY', 1),
 										borderWidth: 1
 									}, {
 										label: '차단',
@@ -3331,23 +3392,32 @@
 						
 					// 시스템 트래픽 현황 차트 (3개 선 그래프: SWG, VPN, DLP)
 					if (document.getElementById('ztnaBlockChart')) {
+						// 차트 색상 변수 정의 (시스템 리소스 차트와 동일한 스타일)
+						const swgColor = getChartColor('PRIMARY', 1);
+						const vpnColor = getChartColor('SECONDARY', 1);
+						const dlpColor = getChartColor('TERTIARY', 1);
+						
 						createMultiLineChart('ztnaBlockChart', [
 							{
 								label: 'SWG',
 								data: [1943, 1850, 1920, 2100, 2080, 1943, 1950, 2000, 1900, 2050, 1980, 2020],
-								color: '#36a2eb'
+								color: swgColor
 							},
 							{
 								label: 'VPN',
 								data: [1943, 1800, 1880, 2050, 2030, 1943, 1920, 1980, 1880, 2020, 1950, 2000],
-								color: '#4bc0c0'
+								color: vpnColor
 							},
 							{
 								label: 'DLP',
 								data: [112, 105, 110, 120, 115, 112, 108, 118, 105, 125, 110, 115],
-								color: '#ff6384'
+								color: dlpColor
 							}
-						]);
+						], {
+							fill: true,
+							backgroundColorOpacity: 0.2,
+							borderWidth: 1
+						});
 						console.log('✓ System Traffic Chart initialized (SWG, VPN, DLP)');
 					}
 						
@@ -3486,13 +3556,13 @@
 									datasets: [{
 										label: '전체',
 										data: [45, 38, 52, 41, 48, 45, 42, 39, 44, 47, 43, 46],
-										borderColor: getChartColor('PRIMARY', 1),
-										backgroundColor: getChartColor('PRIMARY', 0.2),
+										borderColor: getChartColor('DANGER', 1),
+										backgroundColor: getChartColor('WDANGER', 0.2),
 										borderWidth: 1,
 										tension: 0.4,
 										fill: false,
-										pointBackgroundColor: getChartColor('PRIMARY', 1),
-										pointBorderColor: getChartColor('PRIMARY', 1),
+										pointBackgroundColor: getChartColor('DANGER', 1),
+										pointBorderColor: getChartColor('DANGER', 1),
 										pointBorderWidth: 0,
 										pointRadius: 3,
 										pointHoverRadius: 5,
@@ -3500,15 +3570,15 @@
 									}, {
 										label: '개인정보',
 										data: [25, 22, 28, 24, 26, 25, 23, 21, 24, 27, 22, 26],
-										backgroundColor: getChartColor('SECONDARY', 0.8),
-										borderColor: getChartColor('SECONDARY', 1),
+										backgroundColor: getChartColor('PRIMARY', 0.8),
+										borderColor: getChartColor('PRIMARY', 1),
 										borderWidth: 1,
 										type: 'bar'
 									}, {
 										label: '키워드',
 										data: [20, 16, 24, 17, 22, 20, 19, 18, 20, 23, 21, 20],
-										backgroundColor: getChartColor('TERTIARY', 0.8),
-										borderColor: getChartColor('TERTIARY', 1),
+										backgroundColor: getChartColor('SECONDARY', 0.8),
+										borderColor: getChartColor('SECONDARY', 1),
 										borderWidth: 1,
 										type: 'bar'
 									}]
