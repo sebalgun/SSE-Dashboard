@@ -107,6 +107,12 @@ body{
 	--bs-primary-text:var(--c-mainbgcolor) !important;
 	--bs-secondary-bg:var(--c-main) !important;
 	--bg-shadow:0px 0px 5px var(--c-bg2);
+
+	/* 프로그래스 바 색상 변수 */
+	--progress-danger:var(--c-danger);
+	--progress-warning:var(--c-warning);
+	--progress-caution:var(--c-info);
+	--progress-normal:var(--c-main);
 }
 
 /* 제목 및 본문 스타일 */
@@ -158,21 +164,15 @@ div, p, span {font-size:var(--c-font-size);font-weight:var(--c-font-weight);}
 	--c-main-sub2:rgba(0,58,223,0.05);
     --bs-primary-rgb:0,58,223 !important;
 	--chart-text-color:#000 !important;
-	
+
 	/* 그래프 색상 변수 */
-	--chart-primary:rgba(0,58,223,1);
-	--chart-secondary:rgba(89,132,255, 1);
-	--chart-tertiary:rgba(0, 30, 140, 1);
-	--chart-danger:rgba(235, 60, 60, 1);
-	--chart-warning:rgba(0,180, 210, 1);
-	--chart-success:rgba(135, 170, 255, 1);
-	--chart-info:rgba(54, 162, 235, 1);
-	
-	/* 프로그래스 바 색상 변수 */
-	--progress-danger:#d7091d;
-	--progress-warning:#ff6b6b;
-	--progress-caution:#a0b8d8;
-	--progress-normal:#b4c8e9;
+	--chart-primary:rgba(1, 81, 191, 0.9);
+	--chart-secondary:rgba(0, 196, 180, 0.8);
+	--chart-tertiary:rgba(122, 62, 255, 0.8);
+	--chart-danger:rgba(255, 59, 48, 0.8);
+	--chart-warning:rgba(255, 138, 0, 0.8);
+	--chart-success:rgba(48, 209, 88, 0.8);
+	--chart-info:rgba(255, 180, 19, 0.9);
 }
 /* 라이트 모드 03.black*/
 .bgcolor03{	
@@ -207,23 +207,16 @@ div, p, span {font-size:var(--c-font-size);font-weight:var(--c-font-weight);}
 	--c-main-sub2:rgba(70,80,90,0.05);
     --bs-primary-rgb:74,124,125 !important;
 	--chart-text-color:#000 !important;
-	
-	/* 그래프 색상 변수 */
-	--chart-primary:rgba(0,0,0,1);
-	--chart-secondary:rgba(75, 192, 192, 1);
-	--chart-tertiary:rgba(153, 102, 255, 1);
-	--chart-danger:rgba(255, 99, 132, 1);
-	--chart-warning:rgba(255, 159, 64, 1);
-	--chart-success:rgba(75, 192, 192, 1);
-	--chart-info:rgba(54, 162, 235, 1);
-	
-	/* 프로그래스 바 색상 변수 */
-	--progress-danger:#d7091d;
-	--progress-warning:#ff6b6b;
-	--progress-caution:#a0b8d8;
-	--progress-normal:#b4c8e9;
-}
 
+	/* 그래프 색상 변수 */
+	--chart-primary:rgba(0,0,0,0.9);
+	--chart-secondary:rgba(41, 121, 255, 0.8);
+	--chart-tertiary:rgba(122, 62, 255, 0.8);
+	--chart-danger:rgba(255, 59, 48, 0.8);
+	--chart-warning:rgba(255, 138, 0, 0.8);
+	--chart-success:rgba(48, 209, 88, 0.8);
+	--chart-info:rgba(251, 212, 55, 0.8);
+}
 /*  다크모드 01.green*/
 .bgcolor04{
 	--c-text:rgba(255,255,255,.9);
@@ -252,26 +245,21 @@ div, p, span {font-size:var(--c-font-size);font-weight:var(--c-font-weight);}
 	--c-op50:rgba(178,255,67,0.8);
 	--c-op0:rgba(255,255,255,0.1);
 	
-	--c-main:#16ffc0;
+	--c-main:rgba(22,255,192, 1);
 	--c-sub:#329d80;
 	--c-main-sub:rgba(0,170,255, 0.2);
 	--c-main-sub2:rgba(0,170,255, 0.1);
-	--bs-primary-rgb: 0,170,255 !important;
-	
+	--bs-primary-rgb: 0,170,255 !important;	
+
 	/* 그래프 색상 변수 */
-	--chart-primary:#16ffc0;
-	--chart-secondary:rgba(0,170,255, 1);
-	--chart-tertiary:rgba(135,242,233, 1);
-	--chart-danger:rgba(255, 99, 132, 1);
-	--chart-warning:rgba(255, 204, 0, 1);
-	--chart-success:#16ffc0;
-	--chart-info:rgba(0,170,255, 1);
-	
-	/* 프로그래스 바 색상 변수 */
-	--progress-danger:#ff3366;
-	--progress-warning:#ff6b6b;
-	--progress-caution:rgba(0,170,255, 0.6);
-	--progress-normal:rgba(22,255,192, 0.6);
+	--chart-primary:rgba(42, 237, 194, 1);
+	--chart-secondary:rgba(51,140,201, 0.85);
+	--chart-tertiary:rgba(124,  92, 255, 0.9);
+	--chart-danger:rgba(255,  55,  95, 0.88);
+	--chart-warning:rgba(255, 136,   0, 0.9);
+	--chart-success:rgba(255, 214,   0, 0.9);
+	--chart-info:rgba(72, 216, 255, 0.85);
+
 }
 
 /*  다크모드 02.yellow*/
@@ -309,18 +297,12 @@ div, p, span {font-size:var(--c-font-size);font-weight:var(--c-font-weight);}
 	
 	/* 그래프 색상 변수 */
 	--chart-primary:#ffcc00;
-	--chart-secondary:rgba(255, 159, 64, 1);
-	--chart-tertiary:rgba(255, 204, 0, 0.8);
-	--chart-danger:rgba(255, 99, 132, 1);
-	--chart-warning:#ffcc00;
-	--chart-success:rgba(75, 192, 192, 1);
-	--chart-info:rgba(54, 162, 235, 1);
-	
-	/* 프로그래스 바 색상 변수 */
-	--progress-danger:#ff3366;
-	--progress-warning:#ff9900;
-	--progress-caution:#ffcc00;
-	--progress-normal:rgba(255,204,0, 0.6);
+	--chart-secondary:rgba(41, 121, 255, 1);
+	--chart-tertiary:rgba(0, 229, 195, 0.8);
+	--chart-danger:rgba(255, 77, 166, 0.8);
+	--chart-warning:rgba(255, 138, 0, 0.8);
+	--chart-success:rgba(166, 255, 59, 1);
+	--chart-info:rgba(140, 75, 255, 1);
 }
 .bgcolor06{
 	--c-text:rgba(255,255,255,.9);
@@ -363,12 +345,6 @@ div, p, span {font-size:var(--c-font-size);font-weight:var(--c-font-weight);}
 	--chart-warning:rgba(255, 159, 64, 1);
 	--chart-success:rgba(75, 192, 192, 1);
 	--chart-info:#00c6ff;
-	
-	/* 프로그래스 바 색상 변수 */
-	--progress-danger:#ff3366;
-	--progress-warning:#ff6b6b;
-	--progress-caution:rgba(0,198,255, 0.6);
-	--progress-normal:rgba(135,242,233, 0.6);
 }
 .bgcolor07{
 	--c-text:#FFF;
@@ -411,12 +387,6 @@ div, p, span {font-size:var(--c-font-size);font-weight:var(--c-font-weight);}
 	--chart-warning:rgba(255, 159, 64, 1);
 	--chart-success:rgba(75, 192, 192, 1);
 	--chart-info:rgba(54, 162, 235, 1);
-	
-	/* 프로그래스 바 색상 변수 */
-	--progress-danger:#ff3366;
-	--progress-warning:#ff6b6b;
-	--progress-caution:rgba(210,160,255, 0.6);
-	--progress-normal:rgba(180,140,220, 0.6);
 }
 .bgcolor08{
 	--c-text:#FFF;
@@ -461,11 +431,6 @@ div, p, span {font-size:var(--c-font-size);font-weight:var(--c-font-weight);}
 	--chart-success:#b4ff46;
 	--chart-info:rgba(54, 162, 235, 1);
 	
-	/* 프로그래스 바 색상 변수 */
-	--progress-danger:#ff3366;
-	--progress-warning:#ff9900;
-	--progress-caution:rgba(180,255,70, 0.6);
-	--progress-normal:rgba(135,242,233, 0.6);
 }
 .bgcolor09{
 	--c-text:#FFF;
@@ -510,12 +475,6 @@ div, p, span {font-size:var(--c-font-size);font-weight:var(--c-font-weight);}
 	--chart-warning:rgba(255, 159, 64, 1);
 	--chart-success:rgba(75, 192, 192, 1);
 	--chart-info:#98b5ff;
-	
-	/* 프로그래스 바 색상 변수 */
-	--progress-danger:#ff3366;
-	--progress-warning:#ff6b6b;
-	--progress-caution:rgba(152,181,255, 0.6);
-	--progress-normal:rgba(232,239,255, 0.6);
 }
 
 
