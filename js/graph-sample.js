@@ -21,17 +21,20 @@ function getChartColor(colorType) {
 		DANGER: '--chart-danger',
 		WARNING: '--chart-warning',
 		SUCCESS: '--chart-success',
-		INFO: '--chart-info'
+		INFO: '--chart-info',
+		EXTRA: '--chart-extra'
 	};
 	
 	const fallbackMap = {
+		
 		PRIMARY: 'rgba(54, 162, 235, 1)',
 		SECONDARY: 'rgba(75, 192, 192, 1)',
 		TERTIARY: 'rgba(153, 102, 255, 1)',
 		DANGER: 'rgba(255, 99, 132, 1)',
 		WARNING: 'rgba(255, 159, 64, 1)',
 		SUCCESS: 'rgba(75, 192, 192, 1)',
-		INFO: 'rgba(54, 162, 235, 1)'
+		INFO: 'rgba(54, 162, 235, 1)',
+		EXTRA: 'rgba(201, 203, 207, 1)'
 	};
 	
 	const cssVar = colorMap[colorType];
@@ -54,7 +57,8 @@ function getChartColors() {
 		DANGER: getChartColor('DANGER'),
 		WARNING: getChartColor('WARNING'),
 		SUCCESS: getChartColor('SUCCESS'),
-		INFO: getChartColor('INFO')
+		INFO: getChartColor('INFO'),
+		EXTRA: getChartColor('EXTRA')
 	};
 }
 
@@ -187,15 +191,58 @@ function createLineDataset(label, data, color, options = {}) {
 	const mainColor = getMainColor();
 	const defaultColor = color || mainColor;
 	
+	// 투명도 적용 헬퍼 함수
+	const applyOpacity = (colorStr, opacity) => {
+		if (!colorStr) return colorStr;
+		// rgba 형식인 경우 - 투명도만 교체
+		if (colorStr.includes('rgba')) {
+			return colorStr.replace(/rgba\(([^)]+)\)/, (match, content) => {
+				const parts = content.split(',').map(s => s.trim());
+				if (parts.length === 4) {
+					// 이미 rgba 형식이면 투명도만 교체
+					return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${opacity})`;
+				}
+				return match;
+			});
+		}
+		// hex 형식인 경우
+		if (colorStr.startsWith('#')) {
+			const hex = colorStr.slice(1);
+			// 3자리 hex (#RGB) 또는 6자리 hex (#RRGGBB) 처리
+			let r, g, b;
+			if (hex.length === 3) {
+				r = parseInt(hex[0] + hex[0], 16);
+				g = parseInt(hex[1] + hex[1], 16);
+				b = parseInt(hex[2] + hex[2], 16);
+			} else {
+				r = parseInt(hex.slice(0, 2), 16);
+				g = parseInt(hex.slice(2, 4), 16);
+				b = parseInt(hex.slice(4, 6), 16);
+			}
+			return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+		}
+		// rgb 형식인 경우
+		if (colorStr.includes('rgb(')) {
+			return colorStr.replace('rgb(', 'rgba(').replace(')', `, ${opacity})`);
+		}
+		return colorStr;
+	};
+	
+	// borderColor 투명도 설정 (기본값 0.8, options로 오버라이드 가능)
+	const borderOpacity = options.borderOpacity !== undefined ? options.borderOpacity : 0.8;
+	// backgroundColor 투명도 설정 (기본값 0.2, options로 오버라이드 가능)
+	const backgroundColorOpacity = options.backgroundColorOpacity !== undefined ? options.backgroundColorOpacity : 0.2;
+	
 	return {
 		label,
 		data,
-		borderColor: defaultColor,
-		backgroundColor: defaultColor.replace('1)', '0.2)'),
+		borderColor: applyOpacity(defaultColor, borderOpacity),
+		backgroundColor: applyOpacity(defaultColor, backgroundColorOpacity),
+		borderWidth: options.borderWidth !== undefined ? options.borderWidth : 1,
 		tension: 0.4,
 		fill: options.fill !== false,
-		pointBackgroundColor: defaultColor,
-		pointBorderColor: defaultColor,
+		pointBackgroundColor: applyOpacity(defaultColor, borderOpacity),
+		pointBorderColor: applyOpacity(defaultColor, borderOpacity),
 		pointBorderWidth: options.pointBorderWidth || 0,
 		pointRadius: options.pointRadius || 2,
 		pointHoverRadius: options.pointHoverRadius || 2,
@@ -232,12 +279,25 @@ function createMultiLineChart(elementId, datasets, options = {}) {
 		destroyChartInstance(elementId);
 	}
 	
+	// datasets에 color 속성이 있으면 createLineDataset을 사용하여 변환
+	const processedDatasets = datasets.map(dataset => {
+		if (dataset.color && !dataset.borderColor) {
+			// color 속성이 있고 borderColor가 없으면 createLineDataset 사용
+			const backgroundColorOpacity = options.backgroundColorOpacity !== undefined ? options.backgroundColorOpacity : 0.3;
+			return createLineDataset(dataset.label, dataset.data, dataset.color, {
+				...dataset,
+				backgroundColorOpacity: backgroundColorOpacity
+			});
+		}
+		return dataset;
+	});
+	
 	const ctx = chartElement.getContext('2d');
 	const chart = new Chart(ctx, {
 		type: 'line',
 		data: {
 			labels: options.labels || CHART_CONSTANTS.LABELS,
-			datasets: datasets
+			datasets: processedDatasets
 		},
 		options: {
 			...CHART_CONSTANTS.DEFAULT_OPTIONS,
@@ -311,60 +371,6 @@ function createExternalAccessChart(elementId) {
 	});
 }
 
-// 사이트 접속 현황 그래프
-function createMalwareBlockChart(elementId) {
-	const datasets = [
-		createLineDataset('전체', [1200, 800, 1500, 600, 1800, 900, 1400, 700, 1600, 1000, 1300, 1100], getMainColor()),
-		createLineDataset('http', [480, 320, 600, 240, 720, 360, 560, 280, 640, 400, 520, 440], CHART_CONSTANTS.COLORS.SECONDARY),
-		createLineDataset('SSL', [720, 480, 900, 360, 1080, 540, 840, 420, 960, 600, 780, 660], CHART_CONSTANTS.COLORS.TERTIARY)
-	];
-	
-	return createMultiLineChart(elementId, datasets, {
-		showLegend: true,
-		paddingBottom: 0,
-		unit: 'bps',
-		customLabel: (context) => context.dataset.label + ': ' + context.parsed.y + 'bps'
-	});
-}
-
-// 정보유출 감시 현황 그래프
-function createHarmfulBlockSystemChart(elementId) {
-	const datasets = [
-		createLineDataset('전체', [1800, 1850, 1920, 1983, 1950, 1900, 1880, 1850, 1820, 1800, 1780, 1750], getMainColor(), {
-			fill: false,
-			pointBorderWidth: 2,
-			pointRadius: 4,
-			pointHoverRadius: 6
-		}),
-		createLineDataset('웹', [1400, 1440, 1500, 1543, 1520, 1480, 1460, 1440, 1420, 1400, 1380, 1360], CHART_CONSTANTS.COLORS.SECONDARY, {
-			fill: false,
-			pointBorderWidth: 2,
-			pointRadius: 4,
-			pointHoverRadius: 6
-		}),
-		createLineDataset('앱', [400, 410, 420, 440, 430, 420, 420, 410, 400, 400, 400, 390], CHART_CONSTANTS.COLORS.DANGER, {
-			fill: false,
-			pointBorderWidth: 2,
-			pointRadius: 4,
-			pointHoverRadius: 6
-		})
-	];
-	
-	return createMultiLineChart(elementId, datasets, {
-		showLegend: true,
-		legendPosition: 'top',
-		legendFontSize: 12,
-		showYTicks: true,
-		customLabel: (context) => context.dataset.label + ': ' + context.parsed.y.toLocaleString() + '건',
-		chartOptions: {
-			interaction: {
-				intersect: false,
-				mode: 'index'
-			}
-		}
-	});
-}
-
 // ============================================
 // 막대 그래프 (Bar Charts)
 // ============================================
@@ -414,7 +420,7 @@ function createStackedBarChart(elementId, datasets, options = {}) {
 	return saveChartInstance(elementId, chart);
 }
 
-// SWG 누적 막대 그래프
+// 사이트 접속 현황 막대 그래프
 function createSwgStackedBarChart(elementId) {
 	const datasets = [
 		createBarDataset('접속', [173, 165, 180, 195, 188, 175, 170, 165, 160, 175, 180, 185], getMainColor()),
@@ -545,7 +551,7 @@ function createDoughnutChart(elementId, data, labels, options = {}) {
 				data: data,
 				backgroundColor: backgroundColor,
 				borderColor: options.borderColor || 'rgba(255, 255, 255, 0.1)',
-				borderWidth: options.borderWidth || 2,
+				borderWidth: options.borderWidth || 1,
 				hoverOffset: 4
 			}]
 		},
@@ -599,7 +605,7 @@ function createPieChart(elementId, accessValue, blockValue) {
 	});
 }
 
-// AI 사용량 원형 그래프
+// 서비스별 접속현황 원형 그래프
 function createAITotalUsageChart() {
 	const canvas = document.getElementById('aiTotalUsageChart');
 	if (!canvas) {
@@ -608,14 +614,14 @@ function createAITotalUsageChart() {
 	}
 	
 	const totalUsageData = [
-		{ name: '메일', value: 20, color: '#36a2eb' },
-		{ name: '메신저', value: 5, color: '#4bc0c0' },
-		{ name: 'SNS', value: 12, color: '#9966ff' },
-		{ name: '댓글', value: 3, color: '#ff9f40' },
-		{ name: '업무공유', value: 8, color: '#ff6384' },
-		{ name: '웹하드', value: 10, color: '#ffcd56' },
-		{ name: 'FTP', value: 32, color: '#4bc0c0' },
-		{ name: '생성형 AI', value: 10, color: '#c9cbcf' }
+		{ name: '메일', value: 20, color: getChartColor('PRIMARY') },
+		{ name: '메신저', value: 5, color: getChartColor('SECONDARY') },
+		{ name: 'SNS', value: 12, color: getChartColor('TERTIARY') },
+		{ name: '댓글', value: 3, color: getChartColor('WARNING') },
+		{ name: '업무공유', value: 8, color: getChartColor('DANGER') },
+		{ name: '웹하드', value: 10, color: getChartColor('SUCCESS') },
+		{ name: 'FTP', value: 32, color: getChartColor('INFO') },
+		{ name: '생성형 AI', value: 10, color: getChartColor('EXTRA') }
 	];
 	
 	return createDoughnutChart('aiTotalUsageChart',
@@ -630,142 +636,6 @@ function createAITotalUsageChart() {
 	);
 }
 
-// AI 플랫폼 사용량 원형 그래프
-function createAIUsageChart() {
-	const canvas = document.getElementById('aiUsageChart');
-	if (!canvas) {
-		console.error('aiUsageChart canvas element not found');
-		return null;
-	}
-	
-	const aiPlatforms = [
-		{ name: 'ChatGPT', value: 35, color: '#36a2eb' },
-		{ name: 'Claude', value: 25, color: '#4bc0c0' },
-		{ name: 'Gemini', value: 20, color: '#9966ff' },
-		{ name: 'Copilot', value: 15, color: '#ff9f40' },
-		{ name: '기타', value: 5, color: '#ffcd56' }
-	];
-	
-	return createDoughnutChart('aiUsageChart',
-		aiPlatforms.map(platform => platform.value),
-		aiPlatforms.map(platform => platform.name),
-		{
-			colors: aiPlatforms.map(platform => platform.color),
-			cutout: '80%',
-			legendPosition: 'right',
-			unit: '%'
-		}
-	);
-}
-
-// ============================================
-// 시스템 리소스 업데이트 관련
-// ============================================
-
-// 숫자 값 애니메이션
-function animateValue(element, start, end, duration) {
-	const startTime = performance.now();
-	const difference = end - start;
-	
-	element.classList.add('updating');
-	setTimeout(() => element.classList.remove('updating'), 500);
-	
-	function updateValue(currentTime) {
-		const elapsed = currentTime - startTime;
-		const progress = Math.min(elapsed / duration, 1);
-		const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-		const currentValue = start + (difference * easeOutQuart);
-		
-		element.textContent = Math.round(currentValue);
-		
-		if (progress < 1) {
-			requestAnimationFrame(updateValue);
-		}
-	}
-	
-	requestAnimationFrame(updateValue);
-}
-
-// 메모리 값 애니메이션
-function animateMemoryValue(element, start, end, duration) {
-	const startTime = performance.now();
-	const difference = end - start;
-	
-	element.classList.add('updating');
-	setTimeout(() => element.classList.remove('updating'), 500);
-	
-	function updateValue(currentTime) {
-		const elapsed = currentTime - startTime;
-		const progress = Math.min(elapsed / duration, 1);
-		const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-		const currentValue = start + (difference * easeOutQuart);
-		
-		element.innerHTML = currentValue.toFixed(2) + 'G <span class="fw400">/ 7.61G</span>';
-		
-		if (progress < 1) {
-			requestAnimationFrame(updateValue);
-		}
-	}
-	
-	requestAnimationFrame(updateValue);
-}
-
-// 프로그레스 바 애니메이션
-function animateProgressBar(progressBar, targetWidth, duration, isCpuPacket = false) {
-	const startTime = performance.now();
-	const startWidth = parseFloat(progressBar.style.width) || 0;
-	const difference = targetWidth - startWidth;
-	
-	// CSS 변수에서 프로그래스 바 색상 가져오기
-	function getProgressColor(colorType) {
-		const colorMap = {
-			danger: '--progress-danger',
-			warning: '--progress-warning',
-			caution: '--progress-caution',
-			normal: '--progress-normal'
-		};
-		
-		const fallbackMap = {
-			danger: '#d7091d',
-			warning: '#ff6b6b',
-			caution: '#a0b8d8',
-			normal: '#b4c8e9'
-		};
-		
-		const cssVar = colorMap[colorType];
-		const fallback = fallbackMap[colorType];
-		
-		if (!cssVar) return fallback;
-		
-		return getCSSVariable(cssVar, fallback);
-	}
-	
-	function updateProgress(currentTime) {
-		const elapsed = currentTime - startTime;
-		const progress = Math.min(elapsed / duration, 1);
-		const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-		const currentWidth = startWidth + (difference * easeOutQuart);
-		
-		progressBar.style.width = currentWidth + '%';
-		
-		// 색상 변화 효과 (CSS 변수 사용)
-		if (isCpuPacket && currentWidth > 90) {
-			progressBar.style.backgroundColor = getProgressColor('danger');
-		} else if (currentWidth > 80) {
-			progressBar.style.backgroundColor = getProgressColor('warning');
-		} else if (currentWidth > 60) {
-			progressBar.style.backgroundColor = getProgressColor('caution');
-		} else {
-			progressBar.style.backgroundColor = getProgressColor('normal');
-		}
-		
-		if (progress < 1) {
-			requestAnimationFrame(updateProgress);
-		}
-	}
-	
-	requestAnimationFrame(updateProgress);
-}
 
 // 선그래프 데이터 업데이트
 function updateLineChartData(datasetLabel, newValue) {
@@ -807,165 +677,6 @@ function updateLineChartData(datasetLabel, newValue) {
 	trendChart.update('active');
 }
 
-// 시스템 리소스 실시간 업데이트
-function updateSystemResources() {
-	// CPU 패킷
-	const cpuPacketElement = document.querySelector('.chart-bg:nth-child(1) .fs200');
-	const cpuPacketProgress = document.querySelector('.chart-bg:nth-child(1) .progress-bar');
-	if (cpuPacketElement && cpuPacketProgress) {
-		const currentValue = parseInt(cpuPacketElement.textContent);
-		const newValue = Math.max(0, Math.min(100, currentValue + (Math.random() - 0.5) * 10));
-		animateValue(cpuPacketElement, currentValue, newValue, 1000);
-		animateProgressBar(cpuPacketProgress, newValue, 1000, true);
-		updateLineChartData('CPU', newValue);
-	}
-	
-	// CPU SSL
-	const cpuSslElement = document.querySelector('.chart-bg:nth-child(2) .fs200');
-	const cpuSslProgress = document.querySelector('.chart-bg:nth-child(2) .progress-bar');
-	if (cpuSslElement && cpuSslProgress) {
-		const currentValue = parseInt(cpuSslElement.textContent);
-		const newValue = Math.max(0, Math.min(100, currentValue + (Math.random() - 0.5) * 8));
-		animateValue(cpuSslElement, currentValue, newValue, 1000);
-		animateProgressBar(cpuSslProgress, newValue, 1000);
-	}
-	
-	// 메모리
-	const memoryElement = document.querySelector('.chart-bg:nth-child(3) .fs200');
-	const memoryProgress = document.querySelector('.chart-bg:nth-child(3) .progress-bar');
-	if (memoryElement && memoryProgress) {
-		const currentText = memoryElement.textContent;
-		const currentValue = parseFloat(currentText.split('G')[0]);
-		const newValue = Math.max(0, Math.min(7.61, currentValue + (Math.random() - 0.5) * 0.5));
-		animateMemoryValue(memoryElement, currentValue, newValue, 1000);
-		animateProgressBar(memoryProgress, (newValue / 7.61) * 100, 1000);
-		updateLineChartData('MEM', (newValue / 7.61) * 100);
-	}
-	
-	// HTTP 서비스
-	const httpElement = document.querySelector('.chart-bg:nth-child(4) .fs200');
-	const httpProgress = document.querySelector('.chart-bg:nth-child(4) .progress-bar');
-	if (httpElement && httpProgress) {
-		const currentValue = parseInt(httpElement.textContent);
-		const newValue = Math.max(0, Math.min(100, currentValue + Math.floor((Math.random() - 0.3) * 5)));
-		animateValue(httpElement, currentValue, newValue, 1000);
-		animateProgressBar(httpProgress, newValue, 1000);
-	}
-	
-	// HTTPS 서비스
-	const httpsElement = document.querySelector('.chart-bg:nth-child(5) .fs200');
-	const httpsProgress = document.querySelector('.chart-bg:nth-child(5) .progress-bar');
-	if (httpsElement && httpsProgress) {
-		const currentValue = parseInt(httpsElement.textContent);
-		const newValue = Math.max(0, Math.min(100, currentValue + Math.floor((Math.random() - 0.3) * 5)));
-		animateValue(httpsElement, currentValue, newValue, 1000);
-		animateProgressBar(httpsProgress, newValue, 1000);
-	}
-	
-	// HDD
-	const hddValue = Math.max(0, Math.min(100, 20 + (Math.random() - 0.5) * 10));
-	updateLineChartData('HDD', hddValue);
-}
-
-// ============================================
-// 워드 클라우드
-// ============================================
-
-function createWordCloud() {
-	const canvas = document.getElementById('wordCloud');
-	if (!canvas) {
-		console.error('wordCloud canvas element not found');
-		return;
-	}
-	
-	const container = canvas.parentElement;
-	if (container) {
-		canvas.width = container.offsetWidth || 400;
-		canvas.height = container.offsetHeight || 300;
-	} else {
-		canvas.width = 400;
-		canvas.height = 300;
-	}
-	
-	const words = [
-		['보고서', 50], ['이력서', 40], ['휴가추천', 25], ['설계도', 30],
-		['주식추천', 45], ['스팸', 8], ['삼성전자전망', 25], ['AI추천주', 35],
-		['수당', 20], ['코인시세', 30], ['주식동향', 15], ['금가격', 40],
-		['암호화', 6], ['인증', 5], ['PPT', 4], ['연차', 3]
-	];
-	
-	const colorMap = {
-		'보고서': '#3b82f6', '설계도': '#2563eb', 'PPT': '#1d4ed8',
-		'이력서': '#10b981', '휴가추천': '#059669', '연차': '#047857',
-		'주식추천': '#f59e0b', 'AI추천주': '#d97706', '삼성전자전망': '#b45309',
-		'주식동향': '#92400e', '금가격': '#78350f',
-		'코인시세': '#8b5cf6', '수당': '#7c3aed',
-		'스팸': '#ef4444', '암호화': '#dc2626', '인증': '#b91c1c'
-	};
-	
-	const colorGroups = [
-		['#3b82f6', '#2563eb', '#1d4ed8', '#1e40af'],
-		['#10b981', '#059669', '#047857', '#065f46'],
-		['#f59e0b', '#d97706', '#b45309', '#92400e'],
-		['#8b5cf6', '#7c3aed', '#6d28d9', '#5b21b6'],
-		['#ef4444', '#dc2626', '#b91c1c', '#991b1b'],
-		['#06b6d4', '#0891b2', '#0e7490', '#155e75'],
-		['#ec4899', '#db2777', '#be185d', '#9d174d'],
-		['#eab308', '#ca8a04', '#a16207', '#854d0e']
-	];
-	
-	const options = {
-		list: words,
-		weightFactor: 4,
-		fontFamily: 'Pretendard, sans-serif',
-		color: function(word, weight) {
-			if (colorMap[word]) return colorMap[word];
-			
-			let hash = 0;
-			for (let i = 0; i < word.length; i++) {
-				hash = word.charCodeAt(i) + ((hash << 5) - hash);
-			}
-			const groupIndex = Math.abs(hash) % colorGroups.length;
-			const selectedGroup = colorGroups[groupIndex];
-			const colorIndex = Math.min(Math.floor(weight / 10), selectedGroup.length - 1);
-			return selectedGroup[colorIndex];
-		},
-		rotateRatio: 0.3,
-		rotationAngles: [0, 90],
-		backgroundColor: 'transparent',
-		gridSize: 8,
-		drawOutOfBound: false,
-		shrinkToFit: true,
-		minSize: 6,
-		maxSize: 60
-	};
-	
-	try {
-		if (typeof WordCloud !== 'undefined') {
-			WordCloud(canvas, options);
-			
-			canvas.addEventListener('mousemove', () => {
-				canvas.style.cursor = 'pointer';
-			});
-			
-			canvas.addEventListener('click', () => {
-				setTimeout(() => WordCloud(canvas, options), 100);
-			});
-		} else {
-			console.error('WordCloud library not loaded');
-		}
-	} catch (error) {
-		console.error('Error creating word cloud:', error);
-	}
-}
-
-function initWordCloud() {
-	if (typeof WordCloud !== 'undefined') {
-		createWordCloud();
-	} else {
-		setTimeout(initWordCloud, 500);
-	}
-}
 
 // ============================================
 // 차트 초기화 및 제거 함수
@@ -1235,12 +946,12 @@ window.createLineChart = function(elementId, data, label, color = '#36a2eb') {
 				data,
 				borderColor,
 				backgroundColor,
-				borderWidth: 2,
+				borderWidth: 1,
 				fill: true,
 				tension: 0.4,
 				pointBackgroundColor: borderColor,
 				pointBorderColor: '#fff',
-				pointBorderWidth: 2,
+				pointBorderWidth: 4,
 				pointRadius: 4,
 				pointHoverRadius: 6
 			}]
