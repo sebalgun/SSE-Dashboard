@@ -1,0 +1,474 @@
+body{--c-main-sub1:rgba(255, 116, 116, 0.1);}
+html, body {overflow-x: auto !important;}
+.demobox {height:250px;border:1px solid rgba(255,255,255,0.1);padding:10px 5px;overflow-y: hidden !important;}
+.demobox > .ztna{animation:demoAnimation1 7s infinite alternate ease-in-out;}
+.dash-title{font-size:1.05em; color:var(--c-ligray) !important; font-weight:500;}
+.demotable .demofont{width:120px;font-size:3em !important;font-weight:600;padding-top:0px;}
+.dash-count{font-size:3em !important;font-weight:600;text-align:center;padding:15px 0;}
+.demotable{margin:10px 0;padding:0;}
+.demotable tr td{line-height:22px;padding:0;height:22px !important;}
+.back .table thead th, .back .table tr td {font-size:12px !important; font-weight:300;text-align:center;}
+.dash-title{font-size:1em;text-align:left;font-weight:500;margin-top:0;line-height:1.2em;color:var(--c-gray) !important;}
+.dash-title .error{display:inline-block;border-radius:3px;vertical-align: middle;padding:0 5px;background-color:var(--c-red); color:#FFF;font-size:0.8em;}
+.dashbox{position: relative;min-height:180px;transition: min-height 0.3s ease, height 0.3s ease;margin-bottom: 20px;
+	border:1px solid var(--border-content) !important;overflow-y: hidden !important;}
+.dash-stitle{position:absolute;bottom:20px; height:50px;}
+.dashbox.collapsed{min-height:120px !important; height: 120px !important;margin-bottom: 20px;overflow-x: hidden !important;}
+.chart-bar .dashbox.collapsed{min-height:120px !important; height: 120px !important;margin-bottom: 5px;}
+.chart-bar .dashbox{min-height:140px !important;margin-bottom: 5px;}
+.dashbox .accordion{transition: opacity 0.3s ease, max-height 0.3s ease, height 0.3s ease;
+	overflow: hidden !important;max-height: 500px;height: auto;position: relative;}
+.dashbox .accordion.collapsed{max-height: 0 !important; height: 0 !important; opacity: 0; padding: 0 !important; margin: 0 !important;overflow: hidden !important;}
+
+/* GridStack 아이템에서 아코디언 높이 조정 */
+.grid-stack-item-content .dashbox.collapsed {
+	height: 185px !important;
+	min-height: 185px !important;
+	overflow: hidden;
+}
+
+.grid-stack-item.collapsed-height-1 .grid-stack-item-content {
+	overflow: hidden !important;
+}
+
+/* GridStack 아이템 높이 직접 조정 - 185px로 강제 설정 */
+.grid-stack-item.collapsed-height-1 {
+	height: 185px !important;
+	min-height: 185px !important;
+}
+
+.grid-stack-item.collapsed-height-1 .grid-stack-item-content {
+	height: 185px !important;
+}
+
+.grid-stack-item-content .dashbox.collapsed .dash-title {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	margin: 0;
+	width: 100%;
+	text-align: center;
+	z-index: 10;
+}
+.dot{display:inline-block;width:10px; height:10px; border-radius:50%;vertical-align: middle;margin-left:10px;}
+.dot.ok{background-color:var(--c-green);}
+.dot.error{background-color:var(--c-red);animation:demoAnimation1 1s infinite alternate ease-in-out;}
+.dash-graph-box{height:190px;}
+.dash-graph-box canvas{height:180px !important; width: 100% !important;}
+.dash-table-box{height:75px;}
+
+/* 그래프 컨테이너 스타일 개선 */
+canvas {
+	display: block !important;
+	max-width: 100% !important;
+	max-height: 100% !important;
+}
+
+/* 시스템 리소스 차트 스타일 */
+#cpuChart, #memChart, #hddChart {
+	width: 100% !important;
+	height: 120px !important;
+	display: block !important;
+	position: relative !important;
+}
+
+/* 트래픽 차트 스타일 */
+#iamTrafficChart, #ztnaTrafficChart, #swgBlockChart, #ztnaBlockChart, #harmfulBlockSystemChart {
+	width: 100% !important;
+	height: 180px !important;
+	display: block !important;
+	position: relative !important;
+}
+
+/* 유해물 차단현황 및 정보유출 감시 현황 그래프 높이 증가 */
+#harmfulBlockChart, #casbBlockChart {
+	width: 100% !important;
+	display: block !important;
+	position: relative !important;
+}
+
+/* AI 사용량 차트 스타일 */
+#aiTotalUsageChart {
+	width: 100% !important;
+	height: 250px !important;
+	display: block !important;
+	position: relative !important;
+}
+
+/* 차트 컨테이너 개선 */
+.dash-graph-box {
+	position: relative !important;
+	width: 100% !important;
+	height: 180px;
+	overflow: hidden !important;
+	display: flex !important;
+	align-items: center !important;
+}
+
+/* 단일 차트인 경우에만 absolute positioning 적용 (직접 자식인 canvas) */
+.dash-graph-box > canvas {
+	position: absolute !important;
+	top: 0 !important;
+	left: 0 !important;
+	width: 100% !important;
+	height: 100% !important;
+}
+
+/* 원그래프와 선 그래프를 감싸는 div 스타일 */
+.dash-graph-box > div {
+	position: relative !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	height: 180px !important;
+}
+
+/* 원그래프 컨테이너 (30% 너비) */
+.doughnut-chart-container {
+	width: 30% !important;
+	height: 180px !important;
+	min-height: 180px !important;
+	flex-shrink: 0 !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+}
+
+/* 선 그래프 컨테이너 (70% 너비) */
+.line-chart-container {
+	width: 70% !important;
+	height: 180px !important;
+	min-height: 180px !important;
+	flex-shrink: 0 !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+}
+
+/* 원그래프와 선 그래프를 감싸는 div 내부의 canvas */
+.dash-graph-box > div canvas {
+	position: relative !important;
+	width: 100% !important;
+	height: 180px !important;
+	max-height: 180px !important;
+}
+
+/* 원그래프 canvas 특별 스타일 */
+#iamTrafficDoughnutChart, #ztnaTrafficDoughnutChart {
+	height: 140px !important;
+	max-height: 140px !important;
+	width: 100% !important;
+}
+
+/* 선 그래프 canvas 특별 스타일 */
+#iamTrafficChart, #ztnaTrafficChart {
+	height: 180px !important;
+	max-height: 180px !important;
+	width: 100% !important;
+}
+@keyframes demoAnimation3 {
+  0% {opacity:100%;width:14px; height:14px;top:6px; right:6px;}
+  50% {opacity:100%;}
+  51% {opacity:0%;width:12px; height:12px;}
+  100% {opacity:0%;}
+}
+@keyframes demoAnimation2 {
+  0% {background-color:rgba(255,0,24,0.2);}
+  60% {background-color:rgba(255,0,24,0.1);}
+  90% {background-color:var(--bg-content);}
+  100% {background-color:var(--bg-content);}
+}
+.dashbox.error{animation:demoAnimation2 1s infinite alternate ease-in-out;border:1px solid var(--border-content) !important;}
+
+/* 시스템 접속 현황 클릭 가능한 제목 스타일 */
+.clickable-title {
+	cursor: pointer;
+	transition: color 0.3s ease;
+	user-select: none;
+}
+
+.clickable-title:hover {
+	color: var(--c-main);
+}
+
+/* front/back 화면 전환 애니메이션 */
+.front, .back {
+	transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.front {
+	opacity: 1;
+	transform: translateY(0);
+	display: block;
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.back {
+	opacity: 0;
+	transform: translateY(10px);
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	visibility: hidden;
+	pointer-events: none;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.back.show {
+	opacity: 1;
+	transform: translateY(0);
+	display: block;
+	visibility: visible;
+	pointer-events: auto;
+}
+
+.front.hide {
+	opacity: 0;
+	transform: translateY(-10px);
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	visibility: hidden;
+	pointer-events: none;
+}
+
+/* 클릭 가능한 영역 표시 */
+.front, .back {
+	cursor: default;
+	transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* 타이틀 클릭 가능 스타일 */
+.dash-title {
+	cursor: pointer;
+	transition: color 0.3s ease;
+}
+
+.dash-title:hover {
+	color: var(--c-main) !important;
+}
+
+/* front/back 컨테이너 스타일 */
+.accordion {
+	position: relative;
+	overflow: hidden;
+	min-height: 180px;
+}
+#chart-body .accordion{min-height:0;}
+.table thead th{height:25px !important;padding:3px 0;}
+#iamBlockChart{height:160px !important; max-height:160px !important;}
+.iam, .ztna, .swg, .casb{margin-bottom:20px;}
+.w50p > .c-box{height:300px;}
+.chart-bar{height:100%;}
+.g10{gap:10px;}
+
+/* GridStack 스타일 */
+.grid-stack {
+	background: transparent;
+	margin-top:-20px !important;
+	margin-left:-20px !important;
+	margin-bottom: 20px !important;
+}
+
+.grid-stack-item {
+	background: transparent;
+	padding:8px 8px !important;
+	margin-bottom: 20px !important;
+}
+
+.grid-stack-item-content {
+	background: var(--bg-content);
+	border: var(--border-content);
+	overflow: visible;
+}
+
+.grid-stack-item-removing {
+	opacity: 0.8;
+}
+
+.grid-stack-item.ui-draggable-dragging {
+	z-index: 1000;
+	opacity: 0.8;
+}
+
+.grid-stack-item.ui-resizable-resizing {
+	z-index: 1000;
+}
+
+/* 크기 조절 핸들 완전히 숨기기 */
+.grid-stack-item .ui-resizable-handle {
+	display: none !important;
+	visibility: hidden !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
+}
+
+.grid-stack-item .ui-resizable-se {
+	display: none !important;
+	visibility: hidden !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
+}
+
+/* 모든 크기 조절 핸들 숨기기 */
+.grid-stack-item .ui-resizable-n,
+.grid-stack-item .ui-resizable-s,
+.grid-stack-item .ui-resizable-e,
+.grid-stack-item .ui-resizable-w,
+.grid-stack-item .ui-resizable-ne,
+.grid-stack-item .ui-resizable-nw,
+.grid-stack-item .ui-resizable-sw {
+	display: none !important;
+	visibility: hidden !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
+}
+
+/* 호버 시에도 크기 조절 핸들 숨기기 */
+.grid-stack-item:hover .ui-resizable-handle,
+.grid-stack-item:hover .ui-resizable-se,
+.grid-stack-item:hover .ui-resizable-n,
+.grid-stack-item:hover .ui-resizable-s,
+.grid-stack-item:hover .ui-resizable-e,
+.grid-stack-item:hover .ui-resizable-w,
+.grid-stack-item:hover .ui-resizable-ne,
+.grid-stack-item:hover .ui-resizable-nw,
+.grid-stack-item:hover .ui-resizable-sw {
+	display: none !important;
+	visibility: hidden !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
+}
+
+/* 크기 조절 관련 모든 요소 숨기기 */
+.grid-stack-item *[class*="resizable"],
+.grid-stack-item *[class*="resize"] {
+	display: none !important;
+	visibility: hidden !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
+}
+
+/* 드래그 중일 때 시각적 피드백 */
+.grid-stack-item.ui-draggable-dragging .dashbox {
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+	transform: rotate(2deg);
+}
+
+/* Accordion 토글 아이콘 스타일 */
+.accordion-toggle-icon {
+	position: absolute !important;
+	top: 10px !important;
+	right: 10px !important;
+	width: 20px !important;
+	height: 20px !important;
+	cursor: pointer !important;
+	z-index: 1000 !important;
+	pointer-events: auto !important;
+	background: rgba(0, 0, 0, 0.1) !important;
+	border-radius: 3px !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	transition: background-color 0.2s ease !important;
+}
+
+.accordion-toggle-icon:hover {
+	background: rgba(0, 0, 0, 0.2) !important;
+}
+
+.accordion-toggle-icon i {
+	color: rgba(255, 255, 255, 0.6) !important;
+	font-size: 12px !important;
+	transition: color 0.2s ease !important;
+}
+
+.accordion-toggle-icon:hover i {
+	color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* GridStack 드래그 핸들과 accordion 아이콘 충돌 방지 */
+.grid-stack-item .dashbox {
+	position: relative !important;
+}
+
+.grid-stack-item .dashbox .accordion-toggle-icon {
+	pointer-events: auto !important;
+	z-index: 1001 !important;
+}
+
+/* 드래그 중일 때도 accordion 아이콘은 클릭 가능하도록 */
+.grid-stack-item.ui-draggable-dragging .accordion-toggle-icon {
+	pointer-events: auto !important;
+	z-index: 1002 !important;
+}
+
+/* Toast 알림창 스타일 */
+#saveToast {
+	min-width: 300px;
+	max-width: 500px;
+	background-color: var(--bg-content);
+	border: 1px solid var(--border-content);
+	border-radius: var(--bg-radius);
+	box-shadow: var(--bg-shadow);
+}
+
+#saveToast .toast-header {
+	background-color: var(--c-main) !important;
+	border-bottom: 1px solid var(--border-content);
+	color: var(--c-text);
+	padding: 0.75rem 1rem;
+}
+
+/* Bootstrap 클래스가 추가되어도 var(--c-main) 유지 */
+#saveToast .toast-header.bg-success,
+#saveToast .toast-header.bg-danger {
+	background-color: var(--c-main) !important;
+}
+
+#saveToast .toast-header i {
+	color: var(--c-text);
+}
+
+#saveToast .toast-header strong {
+	color: var(--c-text);
+	font-weight: 600;
+}
+
+#saveToast .toast-body {
+	background-color: var(--bg-content);
+	color: var(--c-text);
+	padding: 1rem;
+	font-size: var(--c-font-size);
+}
+
+#saveToast .btn-close {
+	filter: var(--c-svg);
+	opacity: 0.7;
+}
+
+#saveToast .btn-close:hover {
+	opacity: 1;
+}
+
+/* Toast 컨테이너 위치 조정 */
+.toast-container {
+	z-index: 9999 !important;
+}
+
+/* 특정 항목들에 커서 포인터 비활성화 */
+.no-pointer-cursor {
+	cursor: default !important;
+}
+
